@@ -1,5 +1,6 @@
 package models
 
+import ObservableList
 import interfaces.IUser
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -8,5 +9,7 @@ import java.util.*
 data class User(
     override var id: Long,
     override var login: String,
-    override var password: String
-) : IUser
+    override var password: String,
+    private var orders: ObservableList<Order>
+) : IUser{
+}

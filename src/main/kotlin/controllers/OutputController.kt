@@ -1,3 +1,5 @@
+import kotlinx.serialization.descriptors.StructureKind
+
 /**
  * OutputController - class which is responsible for printing information on console
  */
@@ -6,5 +8,9 @@ class OutputController {
         println(message)
     }
 
-
+    fun <T> printNumberedList(list: List<T>){
+        for(i in list.indices){
+            println("${i + 1}) ${list[i]}")
+        }
+    }
 }

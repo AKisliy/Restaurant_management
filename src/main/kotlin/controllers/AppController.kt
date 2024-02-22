@@ -1,16 +1,30 @@
 package controllers
 
 import FilesController
+import InputController
 import ObservableList
+import OutputController
 import enums.FilePaths
 import models.Admin
 import models.User
+import repository.AdminRepository
+import repository.UserRepository
 
 /**
  * AppController - class which is responsible for main app's stages: start, processing and finish
  */
 class AppController {
     private val filesController = FilesController()
+    private lateinit var userController: UserController
+    private lateinit var adminController: AdminController
+    private lateinit var loginController: LoginController
+    private val outputController: OutputController = OutputController()
+    private val inputController: InputController = InputController(::printError)
+
+    init{
+        launchApp()
+    }
+
     /**
      * launch - starts the app. Take all the information from JSON files and returns CinemaManager with proper lists
      */
@@ -23,37 +37,59 @@ class AppController {
         val oAdmins = ObservableList(admins)
         oUsers.addObserver { _, _ -> filesController.saveChanges(users, FilePaths.USERS_FILE.path) }
         oAdmins.addObserver{ _, _ -> filesController.saveChanges(admins, FilePaths.ADMINS_FILE.path)}
+
+        val usersRepository = UserRepository(oUsers)
+        val adminRepository = AdminRepository(oAdmins)
+        loginController = LoginController(outputController, inputController, usersRepository, adminRepository)
     }
+
     /**
      * appProcess - processing the app
      */
-    fun appProcess(cinemaManager: CinemaManager){
-        var choice = cinemaManager.interactor.getMenuChoice()
-        while(true){
-            when(choice){
-                1-> cinemaManager.sellTicket()
-                2-> cinemaManager.refundTicket()
-                3-> cinemaManager.displaySeatStatus()
-                4-> cinemaManager.editMovieData()
-                5-> cinemaManager.editSessionData()
-                6-> return
-            }
-            if(cinemaManager.interactor.askForApproval("Return to menu?"))
-            {
-                choice = cinemaManager.interactor.getMenuChoice()
-                continue
-            }
-            break
+    fun processApp(){
+        outputController.printMessage("Welcome to Restaurant management system!!")
+        var user = loginController.getUser()
+        while(user == null){
+            outputController.printMessage("Ooops, seems like something went wrong during authorization.")
+            outputController.printMessage("Quit app?(Y/N)")
+            if(inputController.getUserApproval())
+                return;
+            user = loginController.getUser()
+        }
+        outputController.printMessage("Now you're in system!")
+        if(user is Admin){
+            processAdminScenario(user)
+        }
+        else{
+            processUserScenario(user as User)
         }
     }
+
+    /**
+     * processAdminScenario - app scenario if admin registered
+     */
+    private fun processAdminScenario(admin: Admin?){
+        while(true){
+            outputController.printMessage(adminController.getFunctionsString())
+
+        }
+    }
+
+    /**
+     * processUserScenario - app scenario if user registered
+     */
+    private fun processUserScenario(user: User?){
+
+    }
+
     /**
      * finishApp - saves all manager information in files and finish the app
      */
-    fun finishApp(manager: CinemaManager){
-        manager.sessions.saveChanges()
-        manager.cinemaHall.notifyObservers()
-        manager.tickets.saveChanges()
-        manager.movies.saveChanges()
-        manager.interactor.printWithColor("Thank you for using!", Colors.BLUE)
+    fun finishApp(){
+
+    }
+
+    private fun printError(message: String){
+        outputController.printMessage(message)
     }
 }

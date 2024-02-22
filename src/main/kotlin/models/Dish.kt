@@ -4,9 +4,21 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Dish(
-    private val id: Long,
-    var name: String,
+    val id: Long,
+    val name: String,
     var timeForPreparing: Int,
     var description: String,
     var money: Int
-)
+){
+    fun setPrice(price: Int){
+        if(price < 0)
+            throw IllegalArgumentException("Price can't be negative")
+        money = price
+    }
+
+    fun setTimeForPreparing(time: Int){
+        if(time < 0)
+            throw IllegalArgumentException("Time for preparing can't be negative")
+        timeForPreparing = time
+    }
+}
