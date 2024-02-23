@@ -6,6 +6,7 @@ import ObservableList
 import OutputController
 import enums.FilePaths
 import models.Admin
+import models.Restaurant
 import models.User
 import repository.AdminRepository
 import repository.UserRepository
@@ -20,6 +21,7 @@ class AppController {
     private lateinit var loginController: LoginController
     private val outputController: OutputController = OutputController()
     private val inputController: InputController = InputController(::printError)
+    private val orderController: OrderController = OrderController(Restaurant("Bebra", mutableMapOf()))
 
     init{
         launchApp()
@@ -47,6 +49,7 @@ class AppController {
      * appProcess - processing the app
      */
     fun processApp(){
+        orderController.testScreen()
         outputController.printMessage("Welcome to Restaurant management system!!")
         var user = loginController.getUser()
         while(user == null){
@@ -70,6 +73,8 @@ class AppController {
      */
     private fun processAdminScenario(admin: Admin?){
         while(true){
+            outputController.printMessage("You're in admin panel.")
+            outputController.printMessage("Choose option:")
             outputController.printMessage(adminController.getFunctionsString())
 
         }

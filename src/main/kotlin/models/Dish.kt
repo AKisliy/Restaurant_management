@@ -16,7 +16,7 @@ data class Dish(
         money = price
     }
 
-    fun setTimeForPreparing(time: Int){
+    fun setPreparingTime(time: Int){
         if(time < 0)
             throw IllegalArgumentException("Time for preparing can't be negative")
         timeForPreparing = time

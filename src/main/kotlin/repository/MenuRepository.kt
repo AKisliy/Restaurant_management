@@ -81,7 +81,7 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         val dish = getDishByName(dishName)
         if(dish != null){
             try{
-                dish.setTimeForPreparing(time)
+                dish.setPreparingTime(time)
                 return true
             }
             catch (ex: IllegalArgumentException){
