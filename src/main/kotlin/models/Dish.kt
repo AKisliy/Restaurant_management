@@ -6,10 +6,11 @@ import kotlinx.serialization.Serializable
 data class Dish(
     val id: Long,
     val name: String,
-    var timeForPreparing: Int,
     var description: String,
-    var money: Int
+    var timeForPreparing: Int = 0,
+    var money: Int = 0
 ){
+
     fun setPrice(price: Int){
         if(price < 0)
             throw IllegalArgumentException("Price can't be negative")

@@ -53,12 +53,10 @@ class OrderController(
 
         val gui: WindowBasedTextGUI = MultiWindowTextGUI(terminal)
 
-
         val orderWindow = BasicWindow("Orders Queue")
         val orderPanel = Panel(BorderLayout())
 
         val orderTextBox = TextBox(TerminalSize(1, 10), TextBox.Style.MULTI_LINE)
-
 
         orderPanel.addComponent(orderTextBox)
         orderWindow.component = orderPanel
@@ -68,20 +66,18 @@ class OrderController(
         val menuTextBox = TextBox(TerminalSize(1,10), TextBox.Style.MULTI_LINE)
 
         menuPanel.addComponent(menuTextBox)
-        menuWindow.component = menuTextBox
+        menuWindow.component = menuPanel
 
         val terminalSize = terminal.terminalSize
 
-        // Вычисляем положение окон относительно терминала
         val orderWindowPosition = TerminalPosition.TOP_LEFT_CORNER
         val menuWindowPosition = TerminalPosition(terminalSize.columns/2, 0)
 
-        // Устанавливаем положение окон
-        orderWindow.setPosition(orderWindowPosition)
-        menuWindow.setPosition(menuWindowPosition)
-
         gui.addWindow(orderWindow)
         gui.addWindow(menuWindow)
+
+        orderWindow.position = orderWindowPosition
+        menuWindow.position = menuWindowPosition
 
         terminal.startScreen()
 

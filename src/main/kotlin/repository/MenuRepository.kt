@@ -99,6 +99,10 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         return menu.removeIf { d -> d.dish.name == dishName }
     }
 
+    fun exists(dishName: String): Boolean{
+        return menu.any { d -> d.dish.name == dishName }
+    }
+
     fun saveChanges(){
         menu.saveChanges()
     }

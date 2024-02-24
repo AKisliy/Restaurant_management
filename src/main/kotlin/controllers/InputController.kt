@@ -16,6 +16,15 @@ class InputController(
         return choice
     }
 
+    fun getNumber(): Int{
+        var choice = readln().toIntOrNull()
+        while(choice == null){
+            errorPrinter("Incorrect input! Try again:")
+            choice = readln().toIntOrNull()
+        }
+        return choice
+    }
+
     fun getUserString(): String{
         var input = readlnOrNull()
         while(input == null){

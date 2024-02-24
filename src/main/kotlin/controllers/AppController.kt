@@ -74,9 +74,12 @@ class AppController {
     private fun processAdminScenario(admin: Admin?){
         while(true){
             outputController.printMessage("You're in admin panel.")
-            outputController.printMessage("Choose option:")
-            outputController.printMessage(adminController.getFunctionsString())
-
+            while(true) {
+                outputController.printMessage("Choose option:")
+                outputController.printMessage(adminController.getFunctionsString())
+                val choice = inputController.getNumberInRange(1, adminController.functionsNumber)
+                adminController.processFunction(choice)
+            }
         }
     }
 
