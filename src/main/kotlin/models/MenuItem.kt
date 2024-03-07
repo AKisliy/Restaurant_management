@@ -8,6 +8,10 @@ class MenuItem(
     private var amount: Int
 ) {
 
+    fun getAmount(): Int{
+        return amount
+    }
+
     fun setAmount(newAmount: Int){
         if(newAmount < 0)
             throw IllegalArgumentException("Amount can't be negative")
@@ -22,5 +26,9 @@ class MenuItem(
         if(by < 0)
             throw IllegalArgumentException("Can't decrease by negative number")
         amount -= by
+    }
+
+    override fun toString(): String {
+        return "${dish.name}: ${dish.money}$"
     }
 }

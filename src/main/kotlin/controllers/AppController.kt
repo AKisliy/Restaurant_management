@@ -5,10 +5,10 @@ import InputController
 import ObservableList
 import OutputController
 import enums.FilePaths
-import models.Admin
-import models.Restaurant
-import models.User
+import models.*
 import repository.AdminRepository
+import repository.MenuRepository
+import repository.OrderRepository
 import repository.UserRepository
 
 /**
@@ -21,7 +21,7 @@ class AppController {
     private lateinit var loginController: LoginController
     private val outputController: OutputController = OutputController()
     private val inputController: InputController = InputController(::printError)
-    private val orderController: OrderController = OrderController(Restaurant("Bebra", mutableMapOf()))
+    private lateinit var orderController: OrderController
 
     init{
         launchApp()
@@ -34,32 +34,47 @@ class AppController {
     fun launchApp(){
         val users = filesController.getData<MutableList<User>>(FilePaths.USERS_FILE.path)
         val admins = filesController.getData<MutableList<Admin>>(FilePaths.ADMINS_FILE.path)
+        val menu = filesController.getData<MutableList<MenuItem>>(FilePaths.MENU_FILE.path)
+        val orders = filesController.getData<MutableList<Order>>(FilePaths.ORDERS_FILE.path)
 
         val oUsers = ObservableList(users)
         val oAdmins = ObservableList(admins)
+        val oMenu = ObservableList(menu)
+        val oOrders = ObservableList(orders)
+
         oUsers.addObserver { _, _ -> filesController.saveChanges(users, FilePaths.USERS_FILE.path) }
         oAdmins.addObserver{ _, _ -> filesController.saveChanges(admins, FilePaths.ADMINS_FILE.path)}
+        oMenu.addObserver{_, _ -> filesController.saveChanges(menu, FilePaths.MENU_FILE.path)}
+        oOrders.addObserver{_,_ -> filesController.saveChanges(orders, FilePaths.ORDERS_FILE.path)}
 
         val usersRepository = UserRepository(oUsers)
         val adminRepository = AdminRepository(oAdmins)
+        val menuRepository = MenuRepository(oMenu)
+        val orderRepository = OrderRepository(oOrders)
+
         loginController = LoginController(outputController, inputController, usersRepository, adminRepository)
+        adminController = AdminController(outputController, inputController, menuRepository)
+        orderController = OrderController(Restaurant("Bebra", mutableMapOf()), menuRepository)
+        userController = UserController(outputController, inputController, menuRepository,orderController, orderRepository, null)
+        orderController.processOrders()
     }
 
     /**
      * appProcess - processing the app
      */
     fun processApp(){
-        orderController.testScreen()
         outputController.printMessage("Welcome to Restaurant management system!!")
         var user = loginController.getUser()
         while(user == null){
             outputController.printMessage("Ooops, seems like something went wrong during authorization.")
             outputController.printMessage("Quit app?(Y/N)")
             if(inputController.getUserApproval())
-                return;
+                return
             user = loginController.getUser()
         }
         outputController.printMessage("Now you're in system!")
+        outputController.printMessage("Starting orders' screen...")
+        orderController.startScreen()
         if(user is Admin){
             processAdminScenario(user)
         }
@@ -87,7 +102,13 @@ class AppController {
      * processUserScenario - app scenario if user registered
      */
     private fun processUserScenario(user: User?){
-
+        userController.setUser(user!!)
+        while(true){
+            outputController.printMessage("Choose option:")
+            outputController.printMessage(userController.getFunctionsString())
+            val choice = inputController.getNumberInRange(1,1);
+            userController.processFunction(choice)
+        }
     }
 
     /**

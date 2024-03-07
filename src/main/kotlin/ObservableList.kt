@@ -29,4 +29,8 @@ class ObservableList<T>(private val wrapped: MutableList<T>): MutableList<T> by 
         }
         return false
     }
+
+    fun getContent(): List<T> {
+        return wrapped.toList();
+    }
 }

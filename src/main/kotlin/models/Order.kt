@@ -13,9 +13,8 @@ data class Order(
     private var status: OrderStatus,
     private var dishes: ObservableList<OrderItem> = ObservableList(mutableListOf())
 ){
-    @Transient
-    private lateinit var user: User
     private var inKitchen = 0
+
     val total: Int
         get() = dishes.sumOf { d -> d.dish.money * d.getAmount() }
 
@@ -31,20 +30,19 @@ data class Order(
         return totalTime == 0
     }
 
-    fun addDish(dish: Dish){
+    fun addDish(dish: Dish, amount: Int = 1){
         val orderDish = dishes.firstOrNull{d -> d.dish.name == dish.name}
         if(orderDish != null)
-            orderDish.increaseAmount()
+            orderDish.increaseAmount(amount)
         else
-            dishes.add(OrderItem(dish,1))
+            dishes.add(OrderItem(dish,amount))
     }
 
     val totalTime: Int
         get() = dishes.sumOf { d -> d.dish.timeForPreparing * d.getAmount() } - inKitchen
 
     override fun toString(): String {
-        var sb = StringBuilder()
-        return "${user.login}   ${status.name}   ~${totalTime}"
+        return "$userId   ${status.name}   ~${totalTime} min"
     }
 
 }

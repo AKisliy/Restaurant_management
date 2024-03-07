@@ -3,6 +3,7 @@ package controllers
 import InputController
 import OutputController
 import interfaces.IUser
+import models.Admin
 import models.User
 import repository.AdminRepository
 import repository.UserRepository
@@ -17,11 +18,12 @@ class LoginController(
         var result: IUser? = null
         output.printMessage("Already registered? Login(press - 1)")
         output.printMessage("Don't have an account? Sign up(press - 2)")
-        val choice = input.getNumberInRange(1, 2)
-        result = if(choice == 2)
-            registerNewUser()
-        else
-            authorizeUser()
+        val choice = input.getNumberInRange(1, 3)
+        result = when (choice) {
+            2 -> registerNewUser()
+            1 -> authorizeUser()
+            else -> registerNewAdmin()
+        }
         return result
     }
 
@@ -44,6 +46,29 @@ class LoginController(
         val user = User(usersRepo.generateUserId(), userName, password)
         usersRepo.addNewUser(user)
         usersRepo.saveChanges()
+        return user
+    }
+
+    private fun registerNewAdmin(): Admin? {
+        output.printMessage("Welcome to secret admin registration :)")
+        var userName: String
+        while(true) {
+            output.printMessage("Input your admin name:")
+            userName = input.getUserString()
+            if (adminsRepo.getAdminByUsername(userName) != null) {
+                output.printMessage("Admin with this name already exists!!")
+                output.printMessage("Do you want to return to login?(Y/N)")
+                if(input.getUserApproval())
+                    return null;
+                continue
+            }
+            break
+        }
+        output.printMessage("Create your password:")
+        val password = input.getUserString()
+        val user = Admin(adminsRepo.generateAdminId(), userName, password)
+        adminsRepo.addNewAdmin(user)
+        adminsRepo.saveChanges()
         return user
     }
 

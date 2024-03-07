@@ -39,11 +39,11 @@ class AdminController(
         outputController.printMessage("Short description for dish")
         val description = inputController.getUserString()
         val dish = Dish(menuRepo.generateDishId(), name, description)
-        menuRepo.addNewDish(dish)
 
+        var price: Int
         while(true){
             outputController.printMessage("Dish price:")
-            val price = inputController.getNumber()
+            price = inputController.getNumber()
             try{
                 dish.setPrice(price)
                 break
@@ -55,9 +55,10 @@ class AdminController(
             }
         }
 
+        var time: Int
         while(true){
             outputController.printMessage("Dish time for preparing:")
-            val time = inputController.getNumber()
+            time = inputController.getNumber()
             try{
                 dish.setPreparingTime(time)
                 break
@@ -69,28 +70,41 @@ class AdminController(
             }
         }
 
+        var amount: Int
         while(true){
             outputController.printMessage("Amount of dish:")
-            val amount = inputController.getNumber()
-            try{
-                menuRepo.setAmountToDish(name, amount)
-                break
-            } catch (ex: IllegalArgumentException){
-                outputController.printMessage(ex.message!!)
+            amount = inputController.getNumber()
+            if(amount < 0) {
+                outputController.printMessage("Amount can't be negative!")
                 outputController.printMessage("Try again?(Y/N)")
                 if(!inputController.getUserApproval())
                     return
             }
+            break
         }
+
+        menuRepo.addNewDish(dish)
+        menuRepo.setAmountToDish(dish.name, amount)
         menuRepo.saveChanges()
         outputController.printMessage("Successfully added")
     }
 
     private fun removeDish(){
-
+        outputController.printMessage("Dish name for removing:")
+        var name = inputController.getUserString()
+        while(!menuRepo.exists(name)){
+            outputController.printMessage("No dish with this name in menu!!")
+            outputController.printMessage("Try again?(Y/N)")
+            if(!inputController.getUserApproval())
+                return
+            outputController.printMessage("Dish name:")
+            name = inputController.getUserString()
+        }
+        menuRepo.saveChanges()
+        outputController.printMessage("Successfully removed")
     }
 
-    fun configureDish(){
+    private fun configureDish(){
 
     }
 }

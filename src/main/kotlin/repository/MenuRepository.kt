@@ -106,4 +106,14 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
     fun saveChanges(){
         menu.saveChanges()
     }
+
+    fun allDishes(): List<MenuItem>{
+        return menu.getContent()
+    }
+
+    fun getAmountOfDish(name: String): Int? {
+        if(getDishByName(name) == null)
+            return null
+        return menu.first { m -> m.dish.name == name }.getAmount()
+    }
 }
