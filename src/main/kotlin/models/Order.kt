@@ -1,10 +1,8 @@
 package models
 
-import ObservableList
+import infrastructure.ObservableList
 import enums.OrderStatus
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlin.text.StringBuilder
 
 @Serializable
 data class Order(
@@ -42,7 +40,7 @@ data class Order(
         get() = dishes.sumOf { d -> d.dish.timeForPreparing * d.getAmount() } - inKitchen
 
     override fun toString(): String {
-        return "$userId   ${status.name}   ~${totalTime} min"
+        return "$id   ${status.name}   ~${totalTime} min"
     }
 
 }

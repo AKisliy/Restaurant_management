@@ -4,7 +4,9 @@ import OrderWindow
 import javax.swing.*
 import java.awt.BorderLayout
 
-class CreateOrderWindow : JFrame("Создание заказа") {
+class CreateOrderWindow(
+    availableDishes: Array<String>,
+    private val callBack: (List<String>) -> Unit) : JFrame("Создание заказа") {
     private val dishComboBox: JComboBox<String>
     private val quantityField = JTextField("1")
     private val orderModel = DefaultListModel<String>()
@@ -16,7 +18,7 @@ class CreateOrderWindow : JFrame("Создание заказа") {
         defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
         // Список доступных блюд
-        val availableDishes = arrayOf("Блюдо 1", "Блюдо 2", "Блюдо 3")
+        //val availableDishes = arrayOf("Блюдо 1", "Блюдо 2", "Блюдо 3")
         dishComboBox = JComboBox(availableDishes)
 
         val controlPanel = JPanel()
@@ -27,10 +29,10 @@ class CreateOrderWindow : JFrame("Создание заказа") {
         }
         controlPanel.add(addButton)
 
-        val finishOrderButton = JButton("Завершить заказ").apply {
+        val finishOrderButton = JButton("Сделать заказ").apply {
             addActionListener {
                 dispose() // Закрыть текущее окно
-                SwingUtilities.invokeLater { OrderWindow(orderModel.elements().toList().toMutableList(), mutableListOf("d1")) }
+                callBack(orderModel.elements().toList())
             }
         }
         controlPanel.add(finishOrderButton)

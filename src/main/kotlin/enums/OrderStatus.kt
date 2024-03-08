@@ -2,7 +2,7 @@ package enums
 
 enum class OrderStatus {
     ACCEPTED,
-    RECIEVED,
+    RECEIVED,
     COOKING,
     READY
 }

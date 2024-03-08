@@ -1,6 +1,6 @@
 package repository
 
-import ObservableList
+import infrastructure.ObservableList
 import enums.OrderStatus
 import models.Order
 import models.OrderItem
@@ -18,7 +18,7 @@ class OrderRepository(private val orders: ObservableList<Order>) {
     }
 
     fun create(dishes: MutableList<OrderItem>, user: User): Order {
-        val order = Order(generateOrderId(),user.id,OrderStatus.ACCEPTED,ObservableList(dishes))
+        val order = Order(generateOrderId(),user.id,OrderStatus.ACCEPTED, ObservableList(dishes))
         addOrder(order)
         return order
     }

@@ -1,6 +1,6 @@
 package repository
 
-import ObservableList
+import infrastructure.ObservableList
 import models.Dish
 import models.MenuItem
 import java.lang.IllegalArgumentException

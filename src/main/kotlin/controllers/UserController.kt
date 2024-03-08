@@ -1,12 +1,18 @@
 package controllers
 
 import InputController
+import OrderWindow
 import OutputController
-import models.Order
+import infrastructure.Parser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import models.OrderItem
 import models.User
 import repository.MenuRepository
 import repository.OrderRepository
+import ui.CreateOrderWindow
+import javax.swing.SwingUtilities
 
 class UserController(
     private val outputController: OutputController,
@@ -18,18 +24,26 @@ class UserController(
 ) {
     val functionsNumber = 1
     fun getFunctionsString(): String{
-        return "1) MakeOrder\n"
+        return "1) MakeOrder"
     }
 
     fun setUser(user: User){
         this.user = user
     }
 
-    fun processFunction(number: Int){
-        if(number < 1 || number > functionsNumber)
-            throw IllegalArgumentException("No such function for admin")
-        when(number){
-            1 -> makeOrder()
+    fun serveClient(){
+        SwingUtilities.invokeLater {
+            CreateOrderWindow(menuRepository.allDishes().map { d -> d.dish.name }.toTypedArray(),
+                ::creationCallback)
+        }
+    }
+
+    fun creationCallback(list: List<String>){
+        val dishes = Parser.parseOrder(list, menuRepository)
+        val order = orderRepository.create(dishes, user!!)
+        orderController.makeOrder(order)
+        SwingUtilities.invokeLater {
+            OrderWindow(list, menuRepository.allDishes().map { d -> d.dish.name }.toMutableList(), order.id, orderController::cancelOrder)
         }
     }
 

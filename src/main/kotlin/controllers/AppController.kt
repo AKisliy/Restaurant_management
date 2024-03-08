@@ -2,9 +2,12 @@ package controllers
 
 import FilesController
 import InputController
-import ObservableList
+import infrastructure.ObservableList
 import OutputController
 import enums.FilePaths
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import models.*
 import repository.AdminRepository
 import repository.MenuRepository
@@ -30,12 +33,12 @@ class AppController {
     /**
      * launch - starts the app. Take all the information from JSON files and returns CinemaManager with proper lists
      */
-    // TODO: implement logic of app launching
-    fun launchApp(){
+    private fun launchApp(){
         val users = filesController.getData<MutableList<User>>(FilePaths.USERS_FILE.path)
         val admins = filesController.getData<MutableList<Admin>>(FilePaths.ADMINS_FILE.path)
         val menu = filesController.getData<MutableList<MenuItem>>(FilePaths.MENU_FILE.path)
         val orders = filesController.getData<MutableList<Order>>(FilePaths.ORDERS_FILE.path)
+        val restaurant = filesController.getData<Restaurant>(FilePaths.RESTAURANT_FILE.path)
 
         val oUsers = ObservableList(users)
         val oAdmins = ObservableList(admins)
@@ -54,7 +57,7 @@ class AppController {
 
         loginController = LoginController(outputController, inputController, usersRepository, adminRepository)
         adminController = AdminController(outputController, inputController, menuRepository)
-        orderController = OrderController(Restaurant("Bebra", mutableMapOf()), menuRepository)
+        orderController = OrderController(restaurant, menuRepository)
         userController = UserController(outputController, inputController, menuRepository,orderController, orderRepository, null)
         orderController.processOrders()
     }
@@ -102,12 +105,14 @@ class AppController {
      * processUserScenario - app scenario if user registered
      */
     private fun processUserScenario(user: User?){
-        userController.setUser(user!!)
-        while(true){
-            outputController.printMessage("Choose option:")
-            outputController.printMessage(userController.getFunctionsString())
-            val choice = inputController.getNumberInRange(1,1);
-            userController.processFunction(choice)
+        CoroutineScope(Dispatchers.Default).launch {
+            userController.setUser(user!!)
+            while(true){
+                outputController.printMessage("Choose option:")
+                outputController.printMessage(userController.getFunctionsString())
+                val choice = inputController.getNumberInRange(1,1);
+                userController.serveClient()
+            }
         }
     }
 

@@ -1,8 +1,10 @@
+package infrastructure
+
 import kotlinx.serialization.Serializable
 import java.util.Observable
 import java.util.function.Predicate
 /**
- * ObservableList<T> - "обертка" над MutableList, которая позволяет отслеживать добавление и
+ * infrastructure.ObservableList<T> - "обертка" над MutableList, которая позволяет отслеживать добавление и
  * удаление элементов из листа
  */
 @Serializable

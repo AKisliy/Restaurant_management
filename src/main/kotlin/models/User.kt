@@ -1,9 +1,8 @@
 package models
 
-import ObservableList
+import infrastructure.ObservableList
 import interfaces.IUser
 import kotlinx.serialization.Serializable
-import java.util.*
 
 @Serializable
 data class User(

@@ -1,6 +1,6 @@
 package repository
 
-import ObservableList
+import infrastructure.ObservableList
 import models.Admin
 
 class AdminRepository(private val admins: ObservableList<Admin>) {

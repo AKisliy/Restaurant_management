@@ -1,8 +1,13 @@
+import models.Order
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.*
 
-class OrderWindow(private val inOrder: MutableList<String>, private val availableDishes: List<String>) : JFrame("Статус заказа") {
+class OrderWindow(private val inOrder: List<String>,
+                  private val availableDishes: List<String>,
+                  private val orderId: Long,
+                  private val onCancel: (Long) -> Unit
+) : JFrame("Статус заказа") {
     private val orderModel = DefaultListModel<String>()
     private val orderList = JList(orderModel)
     private val dishesComboBox = JComboBox(availableDishes.toTypedArray())
@@ -10,6 +15,7 @@ class OrderWindow(private val inOrder: MutableList<String>, private val availabl
     private val constraints = GridBagConstraints()
 
     init {
+        orderModel.addElement("Ваш заказ №$orderId. Готовность можно увидеть на табло ;)")
         for(i in inOrder)
             orderModel.addElement(i)
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
@@ -64,6 +70,7 @@ class OrderWindow(private val inOrder: MutableList<String>, private val availabl
         // Кнопка для отмены заказа
         val cancelButton = JButton("Отменить заказ")
         cancelButton.addActionListener {
+            onCancel(orderId)
             JOptionPane.showMessageDialog(this, "Заказ отменен")
             dispose() // Закрыть окно
         }
@@ -82,7 +89,8 @@ class OrderWindow(private val inOrder: MutableList<String>, private val availabl
         val selectedDish = dishesComboBox.selectedItem.toString()
         val quantity = quantityField.text.toIntOrNull() ?: return JOptionPane.showMessageDialog(this, "Введите корректное количество", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
         if (quantity > 0) {
-            val index = orderModel.elements().toList().indexOfFirst { o -> o.substring(0, o.indexOf('x') - 1) == selectedDish }
+            val index = orderModel.elements().toList().indexOfFirst {
+                o -> o.substring(0, if (o.indexOf('x') > 0) o.indexOf('x') - 1 else 0) == selectedDish }
             if(index == -1) {
                 orderModel.addElement("$selectedDish x $quantity")
             } else{

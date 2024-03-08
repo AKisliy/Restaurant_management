@@ -1,6 +1,6 @@
 package repository
 
-import ObservableList
+import infrastructure.ObservableList
 import models.User
 
 class UserRepository(private val users: ObservableList<User>) {

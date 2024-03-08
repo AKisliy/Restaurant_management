@@ -2,10 +2,6 @@ package controllers
 
 import com.googlecode.lanterna.TerminalPosition
 import enums.OrderStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import models.Order
 import models.Restaurant
 import java.util.*
@@ -14,7 +10,9 @@ import com.googlecode.lanterna.gui2.*
 import com.googlecode.lanterna.screen.Screen
 import com.googlecode.lanterna.screen.TerminalScreen
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory
+import kotlinx.coroutines.*
 import repository.MenuRepository
+import kotlin.collections.HashMap
 import kotlin.concurrent.thread
 
 class OrderController(
@@ -22,7 +20,8 @@ class OrderController(
     private val menuRepository: MenuRepository
 ) {
     private val ordersQueue: Queue<Order> = LinkedList()
-    private val screenQueue: Queue<Order> = LinkedList()
+    private val screenQueue: MutableList<Order> = mutableListOf()
+    private val jobs: MutableMap<Long, Job> = HashMap()
 
     fun makeOrder(order: Order){
         ordersQueue.add(order)
@@ -36,20 +35,30 @@ class OrderController(
                 if (ordersQueue.isNotEmpty()) {
                     val order = ordersQueue.poll()
                     order.setStatus(OrderStatus.COOKING)
-                    processOrder(order)
+                    jobs[order.id] = CoroutineScope(Dispatchers.Default).launch {
+                        processOrder(order)
+                    }
                 }
             }
         }
     }
 
     private suspend fun processOrder(order: Order) {
-        CoroutineScope(Dispatchers.Default).launch {
-            delay((order.totalTime.toLong() * 1000))
-            order.setStatus(OrderStatus.READY)
-            println("Order processed: $order")
-            order.setStatus(OrderStatus.RECIEVED)
-            restaurant.orderSold(order)
+        for(i in 0..<order.totalTime){
+            order.increaseTimeInKitchen()
+            delay(1000)
         }
+        order.setStatus(OrderStatus.READY)
+        //println("Order processed: $order")
+        //order.setStatus(OrderStatus.RECIEVED)
+        restaurant.orderSold(order)
+        jobs.remove(order.id)
+    }
+
+    fun cancelOrder(id: Long){
+        jobs[id]?.cancel()
+        jobs.remove(id)
+        screenQueue.removeIf { o -> o.id == id }
     }
 
 
