@@ -1,13 +1,17 @@
+import enums.OrderStatus
+import interfaces.OrderStatusListener
 import models.Order
+import models.OrderItem
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.*
 
 class OrderWindow(private val inOrder: List<String>,
                   private val availableDishes: List<String>,
-                  private val orderId: Long,
-                  private val onCancel: (Long) -> Unit
-) : JFrame("Статус заказа") {
+                  private val order: Order,
+                  private val onCancel: (Long) -> Unit,
+                  private val onAddDish: (Long, String, Int) -> Unit
+) : JFrame("Статус заказа"), OrderStatusListener {
     private val orderModel = DefaultListModel<String>()
     private val orderList = JList(orderModel)
     private val dishesComboBox = JComboBox(availableDishes.toTypedArray())
@@ -15,7 +19,7 @@ class OrderWindow(private val inOrder: List<String>,
     private val constraints = GridBagConstraints()
 
     init {
-        orderModel.addElement("Ваш заказ №$orderId. Готовность можно увидеть на табло ;)")
+        orderModel.addElement("Ваш заказ №${order.id} Готовность можно увидеть на табло ;)")
         for(i in inOrder)
             orderModel.addElement(i)
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
@@ -70,7 +74,7 @@ class OrderWindow(private val inOrder: List<String>,
         // Кнопка для отмены заказа
         val cancelButton = JButton("Отменить заказ")
         cancelButton.addActionListener {
-            onCancel(orderId)
+            onCancel(order.id)
             JOptionPane.showMessageDialog(this, "Заказ отменен")
             dispose() // Закрыть окно
         }
@@ -98,8 +102,15 @@ class OrderWindow(private val inOrder: List<String>,
                 val prevQuantity = orderItem.substring(orderItem.indexOf('x') + 2).toInt()
                 orderModel[index] = "$selectedDish x ${prevQuantity + quantity}"
             }
+            onAddDish(order.id, selectedDish, quantity)
         } else {
             JOptionPane.showMessageDialog(this, "Количество должно быть больше нуля", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
+        }
+    }
+
+    override fun onOrderStatusChanged(newStatus: OrderStatus) {
+        if(newStatus == OrderStatus.READY){
+            dispose()
         }
     }
 }

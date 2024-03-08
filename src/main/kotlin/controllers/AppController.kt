@@ -77,7 +77,7 @@ class AppController {
         }
         outputController.printMessage("Now you're in system!")
         outputController.printMessage("Starting orders' screen...")
-        orderController.startScreen()
+        orderController.startRestaurantBoard()
         if(user is Admin){
             processAdminScenario(user)
         }

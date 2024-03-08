@@ -12,20 +12,24 @@ import com.googlecode.lanterna.screen.TerminalScreen
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory
 import kotlinx.coroutines.*
 import repository.MenuRepository
-import kotlin.collections.HashMap
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
 
 class OrderController(
     private val restaurant: Restaurant,
     private val menuRepository: MenuRepository
 ) {
-    private val ordersQueue: Queue<Order> = LinkedList()
-    private val screenQueue: MutableList<Order> = mutableListOf()
-    private val jobs: MutableMap<Long, Job> = HashMap()
+    private val ordersQueue: Queue<Order> = ConcurrentLinkedQueue()
 
-    fun makeOrder(order: Order){
+    private val screenQueue: MutableList<Order> = Collections.synchronizedList(mutableListOf())
+    private val readyCallbacks: MutableMap<Long, (Long) -> Unit> = ConcurrentHashMap()
+    private val jobs: MutableMap<Long, Job> = ConcurrentHashMap()
+
+    fun makeOrder(order: Order, onReady: (Long) -> Unit ){
         ordersQueue.add(order)
         screenQueue.add(order)
+        readyCallbacks[order.id] = onReady
     }
 
     fun processOrders() {
@@ -44,13 +48,14 @@ class OrderController(
     }
 
     private suspend fun processOrder(order: Order) {
-        for(i in 0..<order.totalTime){
+        while(!order.isReady()){
             order.increaseTimeInKitchen()
             delay(1000)
         }
         order.setStatus(OrderStatus.READY)
         //println("Order processed: $order")
         //order.setStatus(OrderStatus.RECIEVED)
+        readyCallbacks[order.id]?.invoke(order.id)
         restaurant.orderSold(order)
         jobs.remove(order.id)
     }
@@ -62,7 +67,7 @@ class OrderController(
     }
 
 
-    fun startScreen() {
+    fun startRestaurantBoard() {
         val terminalFactory = DefaultTerminalFactory()
         val terminal: Screen = TerminalScreen(terminalFactory.createTerminal())
 
@@ -133,13 +138,4 @@ class OrderController(
             terminal.stopScreen()
         }
     }
-
-    fun getOrderText(orderQueue: Queue<String>): String {
-        val sb = StringBuilder()
-        for (order in orderQueue) {
-            sb.append(order).append("\n")
-        }
-        return sb.toString()
-    }
-
 }

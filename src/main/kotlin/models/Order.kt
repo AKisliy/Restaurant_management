@@ -2,7 +2,9 @@ package models
 
 import infrastructure.ObservableList
 import enums.OrderStatus
+import interfaces.OrderStatusListener
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Serializable
 data class Order(
@@ -11,6 +13,8 @@ data class Order(
     private var status: OrderStatus,
     private var dishes: ObservableList<OrderItem> = ObservableList(mutableListOf())
 ){
+    private val listeners: MutableList<OrderStatusListener> = mutableListOf()
+    @Transient
     private var inKitchen = 0
 
     val total: Int
@@ -18,6 +22,11 @@ data class Order(
 
     fun setStatus(status: OrderStatus){
         this.status = status
+        listeners.forEach{ l -> l.onOrderStatusChanged(status) }
+    }
+
+    fun getOrderDishes(): List<OrderItem>{
+        return dishes.getContent()
     }
 
     fun increaseTimeInKitchen(by: Int = 1){
@@ -34,6 +43,10 @@ data class Order(
             orderDish.increaseAmount(amount)
         else
             dishes.add(OrderItem(dish,amount))
+    }
+
+    fun addListener(orderStatusListener: OrderStatusListener){
+        listeners.add(orderStatusListener)
     }
 
     val totalTime: Int
