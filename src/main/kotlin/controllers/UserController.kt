@@ -1,14 +1,7 @@
 package controllers
 
-import InputController
 import OrderWindow
-import OutputController
 import infrastructure.Parser
-import jdk.jfr.DataAmount
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import models.OrderItem
 import models.User
 import repository.MenuRepository
 import repository.OrderRepository
@@ -16,16 +9,14 @@ import ui.CreateOrderWindow
 import ui.PaymentWindow
 import javax.swing.SwingUtilities
 
-// TODO - обработать оплату заказа в окне(нужно менять статус на recieved и убирать с общего табло)
 class UserController(
-    private val outputController: OutputController,
-    private val inputController: InputController,
     private val menuRepository: MenuRepository,
     private val orderController: OrderController,
     private val orderRepository: OrderRepository,
     private var user: User?
 ) {
     val functionsNumber = 1
+    constructor(other: UserController) : this(other.menuRepository, other.orderController, other.orderRepository, other.user)
 
     fun getFunctionsString(): String{
         return "1) MakeOrder"
@@ -64,7 +55,12 @@ class UserController(
     private fun orderReadyCallback(orderId: Long){
         SwingUtilities.invokeLater{
             val order = orderRepository.getOrder(orderId) ?: throw Exception("No order with id: $orderId")
-            PaymentWindow(order)
+            PaymentWindow(order, ::orderPaidCallback)
         }
+    }
+
+    private fun orderPaidCallback(orderId: Long){
+        val order = orderRepository.getOrder(orderId) ?: throw Exception("Not order with id: $orderId")
+        orderController.orderPaid(order)
     }
 }

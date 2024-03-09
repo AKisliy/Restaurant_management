@@ -21,7 +21,6 @@ class OrderController(
     private val menuRepository: MenuRepository
 ) {
     private val ordersQueue: Queue<Order> = ConcurrentLinkedQueue()
-
     private val screenQueue: MutableList<Order> = Collections.synchronizedList(mutableListOf())
     private val readyCallbacks: MutableMap<Long, (Long) -> Unit> = ConcurrentHashMap()
     private val jobs: MutableMap<Long, Job> = ConcurrentHashMap()
@@ -33,12 +32,14 @@ class OrderController(
     }
 
     fun processOrders() {
+        // start coroutine to process orders
         CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 delay(1000)
                 if (ordersQueue.isNotEmpty()) {
                     val order = ordersQueue.poll()
                     order.setStatus(OrderStatus.COOKING)
+                    // every order has its own coroutine
                     jobs[order.id] = CoroutineScope(Dispatchers.Default).launch {
                         processOrder(order)
                     }
@@ -53,11 +54,22 @@ class OrderController(
             delay(1000)
         }
         order.setStatus(OrderStatus.READY)
-        //println("Order processed: $order")
-        //order.setStatus(OrderStatus.RECIEVED)
+
         readyCallbacks[order.id]?.invoke(order.id)
-        restaurant.orderSold(order)
-        jobs.remove(order.id)
+        //restaurant.orderSold(order)
+        //jobs.remove(order.id)
+    }
+
+    fun orderPaid(order: Order){
+        CoroutineScope(Dispatchers.Default).launch {
+            restaurant.orderSold(order)
+            jobs.remove(order.id)
+            order.setStatus(OrderStatus.RECEIVED)
+            for (i in 0..5) {
+                delay(1000)
+            }
+            screenQueue.removeIf { o -> o.id == order.id }
+        }
     }
 
     fun cancelOrder(id: Long){

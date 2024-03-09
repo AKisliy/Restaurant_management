@@ -19,7 +19,7 @@ class OrderWindow(private val inOrder: List<String>,
     private val constraints = GridBagConstraints()
 
     init {
-        orderModel.addElement("Ваш заказ №${order.id} Готовность можно увидеть на табло ;)")
+        orderModel.addElement("Ваш заказ №${order.id}. Готовность можно увидеть на табло ;)")
         for(i in inOrder)
             orderModel.addElement(i)
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE

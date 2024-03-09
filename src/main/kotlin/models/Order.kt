@@ -13,6 +13,7 @@ data class Order(
     private var status: OrderStatus,
     private var dishes: ObservableList<OrderItem> = ObservableList(mutableListOf())
 ){
+    @Transient
     private val listeners: MutableList<OrderStatusListener> = mutableListOf()
     @Transient
     private var inKitchen = 0

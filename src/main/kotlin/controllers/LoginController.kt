@@ -15,7 +15,7 @@ class LoginController(
     private val adminsRepo: AdminRepository
 ) {
     fun getUser(): IUser?{
-        var result: IUser? = null
+        val result: IUser?
         output.printMessage("Already registered? Login(press - 1)")
         output.printMessage("Don't have an account? Sign up(press - 2)")
         val choice = input.getNumberInRange(1, 3)

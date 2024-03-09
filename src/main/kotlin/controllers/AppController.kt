@@ -7,12 +7,14 @@ import OutputController
 import enums.FilePaths
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import models.*
 import repository.AdminRepository
 import repository.MenuRepository
 import repository.OrderRepository
 import repository.UserRepository
+import java.lang.Thread.sleep
 
 /**
  * AppController - class which is responsible for main app's stages: start, processing and finish
@@ -58,7 +60,7 @@ class AppController {
         loginController = LoginController(outputController, inputController, usersRepository, adminRepository)
         adminController = AdminController(outputController, inputController, menuRepository)
         orderController = OrderController(restaurant, menuRepository)
-        userController = UserController(outputController, inputController, menuRepository,orderController, orderRepository, null)
+        userController = UserController(menuRepository,orderController, orderRepository, null)
         orderController.processOrders()
     }
 
@@ -66,23 +68,24 @@ class AppController {
      * appProcess - processing the app
      */
     fun processApp(){
-        outputController.printMessage("Welcome to Restaurant management system!!")
-        var user = loginController.getUser()
-        while(user == null){
-            outputController.printMessage("Ooops, seems like something went wrong during authorization.")
-            outputController.printMessage("Quit app?(Y/N)")
-            if(inputController.getUserApproval())
-                return
-            user = loginController.getUser()
-        }
-        outputController.printMessage("Now you're in system!")
-        outputController.printMessage("Starting orders' screen...")
-        orderController.startRestaurantBoard()
-        if(user is Admin){
-            processAdminScenario(user)
-        }
-        else{
-            processUserScenario(user as User)
+        while(true) {
+            outputController.printMessage("Welcome to Restaurant management system!!")
+            var user = loginController.getUser()
+            while (user == null) {
+                outputController.printMessage("Ooops, seems like something went wrong during authorization.")
+                outputController.printMessage("Quit app?(Y/N)")
+                if (inputController.getUserApproval())
+                    return
+                user = loginController.getUser()
+            }
+            outputController.printMessage("Now you're in system!")
+            outputController.printMessage("Starting orders' screen...")
+            orderController.startRestaurantBoard()
+            if (user is Admin) {
+                processAdminScenario(user)
+            } else {
+                processUserScenario(user as User)
+            }
         }
     }
 
@@ -90,14 +93,15 @@ class AppController {
      * processAdminScenario - app scenario if admin registered
      */
     private fun processAdminScenario(admin: Admin?){
-        while(true){
-            outputController.printMessage("You're in admin panel.")
-            while(true) {
-                outputController.printMessage("Choose option:")
-                outputController.printMessage(adminController.getFunctionsString())
-                val choice = inputController.getNumberInRange(1, adminController.functionsNumber)
-                adminController.processFunction(choice)
-            }
+        outputController.printMessage("You're in admin panel.")
+        while(true) {
+            outputController.printMessage("Choose option:")
+            outputController.printNumberedList(adminController.adminFunctions)
+            val choice = inputController.getNumberInRange(1, adminController.functionsNumber)
+            adminController.processFunction(choice)
+            outputController.printMessage("Quit admin panel?(Y/N)")
+            if(inputController.getUserApproval())
+                break
         }
     }
 
@@ -105,14 +109,14 @@ class AppController {
      * processUserScenario - app scenario if user registered
      */
     private fun processUserScenario(user: User?){
+        val newUserController = UserController(userController)
+        newUserController.setUser(user!!)
+        outputController.printMessage("Choose option")
+        outputController.printMessage(newUserController.getFunctionsString())
+        inputController.getNumberInRange(1, newUserController.functionsNumber)
+        // start new coroutine to serve this client
         CoroutineScope(Dispatchers.Default).launch {
-            userController.setUser(user!!)
-            while(true){
-                outputController.printMessage("Choose option:")
-                outputController.printMessage(userController.getFunctionsString())
-                val choice = inputController.getNumberInRange(1,1);
-                userController.serveClient()
-            }
+            newUserController.serveClient()
         }
     }
 
