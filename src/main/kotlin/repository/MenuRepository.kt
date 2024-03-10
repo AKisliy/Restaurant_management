@@ -5,6 +5,9 @@ import models.Dish
 import models.MenuItem
 import java.lang.IllegalArgumentException
 
+/**
+ * MenuRepository - class which manages data about menu items and provides appropriate methods for the rest of the app
+ */
 class MenuRepository(private val menu: ObservableList<MenuItem>) {
     private var dishId: Long = menu.maxOfOrNull { d -> d.dish.id } ?: -1
 

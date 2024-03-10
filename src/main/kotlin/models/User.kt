@@ -4,6 +4,9 @@ import infrastructure.ObservableList
 import interfaces.IUser
 import kotlinx.serialization.Serializable
 
+/**
+ * User - model of user
+ */
 @Serializable
 data class User(
     override var id: Long,

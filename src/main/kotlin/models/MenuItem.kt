@@ -2,6 +2,9 @@ package models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * MenuItem - represents dish in menu
+ */
 @Serializable
 class MenuItem(
     val dish: Dish,

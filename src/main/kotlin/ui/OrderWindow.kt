@@ -1,20 +1,23 @@
 import enums.OrderStatus
 import interfaces.OrderStatusListener
+import models.MenuItem
 import models.Order
-import models.OrderItem
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.*
 
-class OrderWindow(private val inOrder: List<String>,
-                  private val availableDishes: List<String>,
+/**
+ * OrderWindow - window, which user interacts with while waiting for the order
+ */
+class OrderWindow(inOrder: List<String>,
+                  private val availableDishes: List<MenuItem>,
                   private val order: Order,
                   private val onCancel: (Long) -> Unit,
                   private val onAddDish: (Long, String, Int) -> Unit
 ) : JFrame("Статус заказа"), OrderStatusListener {
     private val orderModel = DefaultListModel<String>()
     private val orderList = JList(orderModel)
-    private val dishesComboBox = JComboBox(availableDishes.toTypedArray())
+    private val dishesComboBox = JComboBox(availableDishes.map { d -> d.dish.name }.toTypedArray())
     private val quantityField = JTextField("1")
     private val constraints = GridBagConstraints()
 
@@ -26,7 +29,6 @@ class OrderWindow(private val inOrder: List<String>,
         setSize(500, 400)
         layout = GridBagLayout()
 
-        // Список для отображения текущего заказа
         constraints.fill = GridBagConstraints.BOTH
         constraints.gridx = 0
         constraints.gridy = 0
@@ -35,7 +37,6 @@ class OrderWindow(private val inOrder: List<String>,
         constraints.weighty = 0.8
         add(JScrollPane(orderList), constraints)
 
-        // Выпадающий список доступных блюд
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.gridx = 0
         constraints.gridy = 1
@@ -44,7 +45,6 @@ class OrderWindow(private val inOrder: List<String>,
         constraints.weighty = 0.1
         add(dishesComboBox, constraints)
 
-        // Поле для ввода количества
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.gridx = 1
         constraints.gridy = 1
@@ -56,9 +56,6 @@ class OrderWindow(private val inOrder: List<String>,
     }
 
     private fun createUI() {
-
-
-        // Кнопка для добавления блюда и его количества в заказ
         val addButton = JButton("Добавить в заказ")
         addButton.addActionListener {
             addDishToOrder()
@@ -71,12 +68,11 @@ class OrderWindow(private val inOrder: List<String>,
         constraints.weighty = 0.1
         add(addButton, constraints)
 
-        // Кнопка для отмены заказа
         val cancelButton = JButton("Отменить заказ")
         cancelButton.addActionListener {
             onCancel(order.id)
             JOptionPane.showMessageDialog(this, "Заказ отменен")
-            dispose() // Закрыть окно
+            dispose()
         }
         constraints.fill = GridBagConstraints.HORIZONTAL
         constraints.gridx = 0
@@ -93,6 +89,22 @@ class OrderWindow(private val inOrder: List<String>,
         val selectedDish = dishesComboBox.selectedItem.toString()
         val quantity = quantityField.text.toIntOrNull() ?: return JOptionPane.showMessageDialog(this, "Введите корректное количество", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
         if (quantity > 0) {
+            val dish = availableDishes.first{ d -> d.dish.name == selectedDish }
+            val amount = dish.getAmount()
+            if(quantity > amount) {
+                if(amount == 0){
+                    JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилось сейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
+                    return
+                } else {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Извините, такого количества ${dish.dish.name} у нас нет :(. Есть только ${dish.getAmount()} шт",
+                        "Слишком большое количество",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                    return
+                }
+            }
             val index = orderModel.elements().toList().indexOfFirst {
                 o -> o.substring(0, if (o.indexOf('x') > 0) o.indexOf('x') - 1 else 0) == selectedDish }
             if(index == -1) {

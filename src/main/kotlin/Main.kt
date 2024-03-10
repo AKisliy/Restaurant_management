@@ -4,26 +4,21 @@ import kotlinx.serialization.json.Json
 import models.Restaurant
 import java.io.File
 import java.io.FileWriter
+import java.io.IOException
+import java.lang.Exception
 
-fun main(args: Array<String>) {
-//    val restaurant = Restaurant("Vkusno and tochka", mutableMapOf())
-//    val menu: MutableList<Order> = mutableListOf()
-//    var jsonString = Json.encodeToString(restaurant)
-//    var file = File("restaurant.json")
-//    var writer = FileWriter(file)
-//    writer.write(jsonString)
-//    writer.close()
-
-    val app = AppController()
-    app.processApp()
+fun main() {
+    try {
+        val app = AppController()
+        app.processApp()
+    } catch (ex: IOException){
+        println("Probably one of the files is missing.")
+        println("Please check the paths in enums/FilePaths")
+    } catch(ex: Exception) {
+        println("Unknown exception!")
+        println(ex.message)
+    }
 }
-
-//import ui.CreateOrderWindow
-//import javax.swing.*
-//
-//fun main() {
-//    SwingUtilities.invokeLater { CreateOrderWindow() }
-//}
 
 
 

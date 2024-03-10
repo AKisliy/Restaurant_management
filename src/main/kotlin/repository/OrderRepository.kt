@@ -6,6 +6,9 @@ import models.Order
 import models.OrderItem
 import models.User
 
+/**
+ * OrderRepository - class which manages data about orders and provides appropriate methods for the rest of the app
+ */
 class OrderRepository(private val orders: ObservableList<Order>) {
 
     private var orderId: Long = orders.maxOfOrNull { u -> u.id } ?: -1

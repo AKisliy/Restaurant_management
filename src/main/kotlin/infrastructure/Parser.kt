@@ -3,6 +3,9 @@ package infrastructure
 import models.OrderItem
 import repository.MenuRepository
 
+/**
+ * Parser - object, which is responsible for parsing data from user's order to models
+ */
 object Parser {
     fun parseOrder(items: List<String>, menuRepository: MenuRepository): MutableList<OrderItem> {
         val dishes: MutableList<OrderItem> = mutableListOf()

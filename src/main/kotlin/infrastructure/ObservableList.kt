@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 import java.util.Observable
 import java.util.function.Predicate
 /**
- * infrastructure.ObservableList<T> - "обертка" над MutableList, которая позволяет отслеживать добавление и
- * удаление элементов из листа
+ * ObservableList<T> - "wrapper" above the MutableList that allows you to track the addition and
+ * removal of items from the list
  */
 @Serializable
 class ObservableList<T>(private val wrapped: MutableList<T>): MutableList<T> by wrapped, Observable() {

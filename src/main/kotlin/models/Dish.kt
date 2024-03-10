@@ -2,6 +2,9 @@ package models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Dish - model of dish
+ */
 @Serializable
 data class Dish(
     val id: Long,

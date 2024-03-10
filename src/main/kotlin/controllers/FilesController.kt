@@ -4,11 +4,11 @@ import java.io.File
 import java.io.FileWriter
 
 /**
- * FilesController - класс, отвечающий за работу с файлами
+ * FilesController - responsible for working with files
  */
 class FilesController {
     /**
-     * saveChanges - сохраняет объект item в файл filePath в виде JSON
+     * saveChanges - saves item to filePath in JSON format
      * @param item - item to save
      * @param filePath - path to the file in which item will be saved(in JSON format)
      */
@@ -18,11 +18,10 @@ class FilesController {
         val writer = FileWriter(file)
         writer.write(jsonString)
         writer.close()
-        //println("Saved to $filePath")
     }
 
     /**
-     * getData - получает объект типа T из файла filePath
+     * getData - gets object of type T from filePath
      * @param filePath - path to the file with data
      */
     inline fun <reified T> getData(filePath: String): T{

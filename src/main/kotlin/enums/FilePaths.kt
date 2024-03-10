@@ -1,6 +1,7 @@
 package enums
+
 /**
- * FilePaths - перечисление, хранящее пути к файлам с сериализованной информацией
+ * FilePaths - stores paths to the files with serialized data
  */
 enum class FilePaths(val path: String) {
     ADMINS_FILE("database/admins.json"),

@@ -1,11 +1,14 @@
 package ui
 
-import OrderWindow
+import models.MenuItem
 import javax.swing.*
 import java.awt.BorderLayout
 
+/**
+ * CreateOrderWindow - window, which user interacts with while making order
+ */
 class CreateOrderWindow(
-    availableDishes: Array<String>,
+    private val availableDishes: List<MenuItem>,
     private val callBack: (List<String>) -> Unit) : JFrame("Создание заказа") {
     private val dishComboBox: JComboBox<String>
     private val quantityField = JTextField("1")
@@ -17,9 +20,7 @@ class CreateOrderWindow(
         layout = BorderLayout()
         defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 
-        // Список доступных блюд
-        //val availableDishes = arrayOf("Блюдо 1", "Блюдо 2", "Блюдо 3")
-        dishComboBox = JComboBox(availableDishes)
+        dishComboBox = JComboBox(availableDishes.map { d -> d.dish.name }.toTypedArray())
 
         val controlPanel = JPanel()
         controlPanel.add(dishComboBox)
@@ -47,6 +48,22 @@ class CreateOrderWindow(
         val selectedDish = dishComboBox.selectedItem.toString()
         val quantity = quantityField.text.toIntOrNull() ?: return JOptionPane.showMessageDialog(this, "Введите корректное количество", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
         if (quantity > 0) {
+            val dish = availableDishes.first { x -> x.dish.name == selectedDish }
+            if(quantity > dish.getAmount()){
+                val amount = dish.getAmount()
+                if(amount == 0){
+                    JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилосьсейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
+                    return
+                } else {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Извините, такого количества ${dish.dish.name} у нас нет :( Есть только ${dish.getAmount()} шт",
+                        "Слишком большое количество",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                    return
+                }
+            }
             val index = orderModel.elements().toList().indexOfFirst { o -> o.substring(0, o.indexOf('x') - 1) == selectedDish }
             if(index == -1) {
                 orderModel.addElement("$selectedDish x $quantity")

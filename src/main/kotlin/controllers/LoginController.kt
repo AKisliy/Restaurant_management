@@ -8,6 +8,9 @@ import models.User
 import repository.AdminRepository
 import repository.UserRepository
 
+/**
+ * LoginController - class which is responsible for registration/authorization of users
+ */
 class LoginController(
     private var output: OutputController,
     private var input: InputController,

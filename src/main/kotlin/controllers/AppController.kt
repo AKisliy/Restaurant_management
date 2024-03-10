@@ -121,12 +121,8 @@ class AppController {
     }
 
     /**
-     * finishApp - saves all manager information in files and finish the app
+     * printError - method for inputController to notify about errors
      */
-    fun finishApp(){
-
-    }
-
     private fun printError(message: String){
         outputController.printMessage(message)
     }

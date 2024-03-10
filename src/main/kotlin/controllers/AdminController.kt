@@ -5,7 +5,9 @@ import OutputController
 import models.Dish
 import repository.MenuRepository
 
-// TODO - complete dish editing function + logic if we're out of dish
+/**
+ * AppController - class which is responsible for processing admin's functions
+ */
 class AdminController(
     private val outputController: OutputController,
     private val inputController: InputController,
@@ -40,25 +42,13 @@ class AdminController(
         val description = inputController.getUserString()
         val dish = Dish(menuRepo.generateDishId(), name, description)
 
-        var price: Int
-        while(true){
-            outputController.printMessage("Dish price:")
-            price = inputController.getNumber()
-            try{
-                dish.setPrice(price)
-                break
-            } catch (ex: IllegalArgumentException){
-                outputController.printMessage(ex.message!!)
-                outputController.printMessage("Try again?(Y/N)")
-                if(!inputController.getUserApproval())
-                    return
-            }
-        }
+        val price = getDishPrice() ?: return
+        dish.setPrice(price)
 
-        val time = getTimeForPreparing(dish) ?: return
+        val time = getTimeForPreparing() ?: return
+        dish.setPreparingTime(time)
 
         val amount = getDishAmount() ?: return
-
         menuRepo.addNewDish(dish)
         menuRepo.setAmountToDish(dish.name, amount)
         menuRepo.saveChanges()
@@ -95,12 +85,48 @@ class AdminController(
         outputController.printMessage("Choose option:")
         outputController.printNumberedList(editingOptions)
         val choice = inputController.getNumberInRange(1, editingOptions.size)
+        when(choice){
+            1-> setAmount(name)
+            2-> setPrice(name)
+            3-> setTime(name)
+        }
     }
 
     private fun setAmount(dishName: String){
+        outputController.printMessage("Now amount of $dishName is ${menuRepo.getAmountOfDish(dishName)}")
         outputController.printMessage("Enter new amount of $dishName")
-        var amount = inputController.getNumber()
+        val amount = getDishAmount() ?: return
+        menuRepo.setAmountToDish(dishName, amount)
+    }
 
+    private fun setPrice(dishName: String){
+        outputController.printMessage("Now price of $dishName is ${menuRepo.getDishByName(dishName)?.money}$")
+        outputController.printMessage("Enter new price of $dishName")
+        val price = getDishPrice() ?: return
+        menuRepo.setDishPrice(dishName, price)
+    }
+
+    private fun setTime(dishName: String){
+        outputController.printMessage("Now $dishName is cooking for ~${menuRepo.getDishByName(dishName)?.timeForPreparing} mins")
+        outputController.printMessage("Enter new time for $dishName")
+        val time = getTimeForPreparing() ?: return
+        menuRepo.setDishTimeForPreparing(dishName, time)
+    }
+
+    private fun getDishPrice(): Int? {
+        var price: Int
+        while(true){
+            outputController.printMessage("Dish price:")
+            price = inputController.getNumber()
+            if(price > 0) {
+                return price
+            } else {
+                outputController.printMessage("Price can't be negative")
+                outputController.printMessage("Try again?(Y/N)")
+                if(!inputController.getUserApproval())
+                    return null
+            }
+        }
     }
 
     private fun getDishAmount() : Int? {
@@ -120,21 +146,19 @@ class AdminController(
         return amount
     }
 
-    private fun getTimeForPreparing(dish: Dish) : Int? {
+    private fun getTimeForPreparing() : Int? {
         var time: Int
         while(true){
             outputController.printMessage("Dish time for preparing:")
             time = inputController.getNumber()
-            try{
-                dish.setPreparingTime(time)
-                break
-            } catch (ex: IllegalArgumentException){
-                outputController.printMessage(ex.message!!)
+            if(time >= 0){
+                return time
+            } else{
+                outputController.printMessage("Time can't be negative!")
                 outputController.printMessage("Try again?(Y/N)")
                 if(!inputController.getUserApproval())
                     return null
             }
         }
-        return time
     }
 }

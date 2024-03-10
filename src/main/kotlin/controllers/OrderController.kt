@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
 
+/**
+ * OrderController - class with main logic of dishes "preparing"
+ * Uses Coroutines logic to cook dishes in different threads
+ */
 class OrderController(
     private val restaurant: Restaurant,
     private val menuRepository: MenuRepository
@@ -56,8 +60,6 @@ class OrderController(
         order.setStatus(OrderStatus.READY)
 
         readyCallbacks[order.id]?.invoke(order.id)
-        //restaurant.orderSold(order)
-        //jobs.remove(order.id)
     }
 
     fun orderPaid(order: Order){

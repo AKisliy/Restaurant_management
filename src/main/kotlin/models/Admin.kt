@@ -4,6 +4,9 @@ import interfaces.IUser
 import kotlinx.serialization.Serializable
 import java.util.*
 
+/**
+ * Admin - model of administrator
+ */
 @Serializable
 data class Admin(
     override var id: Long,

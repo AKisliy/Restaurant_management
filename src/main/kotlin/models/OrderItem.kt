@@ -2,6 +2,9 @@ package models
 
 import kotlinx.serialization.Serializable
 
+/**
+ * OrderItem - model of dish in the order
+ */
 @Serializable
 data class OrderItem(
     val dish: Dish,

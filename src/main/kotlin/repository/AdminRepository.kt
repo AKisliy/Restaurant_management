@@ -3,6 +3,9 @@ package repository
 import infrastructure.ObservableList
 import models.Admin
 
+/**
+ * AdminRepository - class which manages data about admins and provides appropriate methods for the rest of the app
+ */
 class AdminRepository(private val admins: ObservableList<Admin>) {
 
     private var adminId: Long = admins.maxOfOrNull { u -> u.id } ?: -1

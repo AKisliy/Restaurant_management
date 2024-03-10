@@ -6,6 +6,9 @@ import interfaces.OrderStatusListener
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+/**
+ * Order - model of order, which consists of OrderItems
+ */
 @Serializable
 data class Order(
     val id: Long,
