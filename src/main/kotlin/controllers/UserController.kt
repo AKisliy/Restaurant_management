@@ -1,6 +1,7 @@
 package controllers
 
 import OrderWindow
+import enums.OrderStatus
 import infrastructure.Parser
 import models.User
 import repository.MenuRepository
@@ -69,6 +70,7 @@ class UserController(
         val order = orderRepository.getOrder(orderId) ?: throw Exception("No order with this id")
         menuRepository.decreaseDishAmount(dishName, amount)
         order.addDish(dish, amount)
+        orderRepository.saveChanges()
     }
 
     /**
@@ -80,6 +82,7 @@ class UserController(
             val order = orderRepository.getOrder(orderId) ?: throw Exception("No order with id: $orderId")
             PaymentWindow(order, ::orderPaidCallback)
         }
+        orderRepository.saveChanges()
     }
 
     /**
@@ -88,6 +91,8 @@ class UserController(
      */
     private fun orderPaidCallback(orderId: Long){
         val order = orderRepository.getOrder(orderId) ?: throw Exception("Not order with id: $orderId")
+        order.setStatus(OrderStatus.RECEIVED)
         orderController.orderPaid(order)
+        orderRepository.saveChanges()
     }
 }

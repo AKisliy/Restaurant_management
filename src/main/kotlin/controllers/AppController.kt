@@ -62,6 +62,7 @@ class AppController {
         orderController = OrderController(restaurant, menuRepository)
         userController = UserController(menuRepository,orderController, orderRepository, null)
         orderController.processOrders()
+        orderController.startRestaurantBoard()
     }
 
     /**
@@ -80,7 +81,6 @@ class AppController {
             }
             outputController.printMessage("Now you're in system!")
             outputController.printMessage("Starting orders' screen...")
-            orderController.startRestaurantBoard()
             if (user is Admin) {
                 processAdminScenario(user)
             } else {

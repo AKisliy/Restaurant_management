@@ -29,6 +29,7 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         if(dish != null){
             try {
                 dish.setAmount(amount)
+                menu.saveChanges()
                 return true
             }
             catch (ex: IllegalArgumentException){
@@ -57,6 +58,7 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         if(dish != null){
             try {
                 dish.decreaseAmount(by)
+                menu.saveChanges()
                 return true
             }
             catch (ex: IllegalArgumentException){
@@ -71,6 +73,7 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         if(dish != null){
             try{
                 dish.setPrice(price)
+                menu.saveChanges()
                 return true
             }
             catch(ex: IllegalArgumentException){
@@ -85,6 +88,7 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
         if(dish != null){
             try{
                 dish.setPreparingTime(time)
+                menu.saveChanges()
                 return true
             }
             catch (ex: IllegalArgumentException){
@@ -99,7 +103,9 @@ class MenuRepository(private val menu: ObservableList<MenuItem>) {
     }
 
     fun removeDish(dishName: String): Boolean{
-        return menu.removeIf { d -> d.dish.name == dishName }
+        val res = menu.removeIf { d -> d.dish.name == dishName }
+        menu.saveChanges()
+        return res
     }
 
     fun exists(dishName: String): Boolean{

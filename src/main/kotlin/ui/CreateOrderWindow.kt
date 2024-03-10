@@ -52,7 +52,7 @@ class CreateOrderWindow(
             if(quantity > dish.getAmount()){
                 val amount = dish.getAmount()
                 if(amount == 0){
-                    JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилосьсейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
+                    JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилось сейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
                     return
                 } else {
                     JOptionPane.showMessageDialog(

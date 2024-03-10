@@ -66,7 +66,6 @@ class OrderController(
         CoroutineScope(Dispatchers.Default).launch {
             restaurant.orderSold(order)
             jobs.remove(order.id)
-            order.setStatus(OrderStatus.RECEIVED)
             for (i in 0..5) {
                 delay(1000)
             }

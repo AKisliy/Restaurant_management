@@ -27,6 +27,7 @@ data class Order(
     fun setStatus(status: OrderStatus){
         this.status = status
         listeners.forEach{ l -> l.onOrderStatusChanged(status) }
+        dishes.saveChanges()
     }
 
     fun getOrderDishes(): List<OrderItem>{
