@@ -1,7 +1,29 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+import controllers.AppController
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import models.Restaurant
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.lang.Exception
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+fun main() {
+    try {
+        val app = AppController()
+        app.processApp()
+    } catch (ex: IOException){
+        println("Probably one of the files is missing.")
+        println("Please check the paths in enums/FilePaths")
+    } catch(ex: Exception) {
+        println("Unknown exception!")
+        println(ex.message)
+    }
 }
+
+
+
+
+
+
+
+

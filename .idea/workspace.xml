@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af5d418c-a46e-4964-8316-2ecb9fac953e" name="Changes" comment="" />
+    <list default="true" id="af5d418c-a46e-4964-8316-2ecb9fac953e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/menu.json" beforeDir="false" afterPath="$PROJECT_DIR$/database/menu.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/orders.json" beforeDir="false" afterPath="$PROJECT_DIR$/database/orders.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/restaurant.json" beforeDir="false" afterPath="$PROJECT_DIR$/database/restaurant.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/controllers/AdminController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/controllers/AdminController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/controllers/AppController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/controllers/AppController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/controllers/InputController.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/controllers/InputController.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/models/Restaurant.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/models/Restaurant.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ui/CreateOrderWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ui/CreateOrderWindow.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ui/OrderWindow.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ui/OrderWindow.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,8 +38,20 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Enum" />
+        <option value="Kotlin Interface" />
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -46,10 +69,40 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/database" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="infrastructure" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="MainKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <module name="Kiselev_HW25.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.MainKt" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -58,8 +111,31 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1708578303330</updated>
-      <workItem from="1708578304394" duration="1000" />
+      <workItem from="1708578304394" duration="17554000" />
+      <workItem from="1708664568734" duration="6597000" />
+      <workItem from="1708752641437" duration="2665000" />
+      <workItem from="1708755321659" duration="1621000" />
+      <workItem from="1708795773310" duration="3472000" />
+      <workItem from="1709786995997" duration="26795000" />
+      <workItem from="1709960440981" duration="6290000" />
+      <workItem from="1710010988709" duration="14220000" />
+      <workItem from="1710170287421" duration="1307000" />
+      <workItem from="1710218040651" duration="1846000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
