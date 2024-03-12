@@ -89,22 +89,8 @@ class OrderWindow(inOrder: List<String>,
         val selectedDish = dishesComboBox.selectedItem.toString()
         val quantity = quantityField.text.toIntOrNull() ?: return JOptionPane.showMessageDialog(this, "Введите корректное количество", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
         if (quantity > 0) {
-            val dish = availableDishes.first{ d -> d.dish.name == selectedDish }
-            val amount = dish.getAmount()
-            if(quantity > amount) {
-                if(amount == 0){
-                    JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилось сейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
-                    return
-                } else {
-                    JOptionPane.showMessageDialog(
-                        this,
-                        "Извините, такого количества ${dish.dish.name} у нас нет :(. Есть только ${dish.getAmount()} шт",
-                        "Слишком большое количество",
-                        JOptionPane.ERROR_MESSAGE
-                    )
-                    return
-                }
-            }
+            if(!checkQuantity(selectedDish, quantity))
+                return
             val index = orderModel.elements().toList().indexOfFirst {
                 o -> o.substring(0, if (o.indexOf('x') > 0) o.indexOf('x') - 1 else 0) == selectedDish }
             if(index == -1) {
@@ -112,12 +98,35 @@ class OrderWindow(inOrder: List<String>,
             } else{
                 val orderItem = orderModel[index]
                 val prevQuantity = orderItem.substring(orderItem.indexOf('x') + 2).toInt()
+                if(!checkQuantity(selectedDish, prevQuantity + quantity)){
+                    return
+                }
                 orderModel[index] = "$selectedDish x ${prevQuantity + quantity}"
             }
             onAddDish(order.id, selectedDish, quantity)
         } else {
             JOptionPane.showMessageDialog(this, "Количество должно быть больше нуля", "Ошибка ввода", JOptionPane.ERROR_MESSAGE)
         }
+    }
+
+    private fun checkQuantity(selectedDish: String, quantity: Int): Boolean{
+        val dish = availableDishes.first { x -> x.dish.name == selectedDish }
+        if(quantity > dish.getAmount()){
+            val amount = dish.getAmount()
+            return if(amount == 0){
+                JOptionPane.showMessageDialog(this, "Извините, блюдо ${dish.dish.name} закончилось сейчас :(", "Недоступно", JOptionPane.ERROR_MESSAGE)
+                false
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Извините, такого количества ${dish.dish.name} у нас нет :( Есть только ${dish.getAmount()} шт",
+                    "Слишком большое количество",
+                    JOptionPane.ERROR_MESSAGE
+                )
+                false
+            }
+        }
+        return true
     }
 
     override fun onOrderStatusChanged(newStatus: OrderStatus) {

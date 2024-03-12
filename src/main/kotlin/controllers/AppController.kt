@@ -58,7 +58,7 @@ class AppController {
         val orderRepository = OrderRepository(oOrders)
 
         loginController = LoginController(outputController, inputController, usersRepository, adminRepository)
-        adminController = AdminController(outputController, inputController, menuRepository)
+        adminController = AdminController(outputController, inputController, menuRepository, restaurant)
         orderController = OrderController(restaurant, menuRepository)
         userController = UserController(menuRepository,orderController, orderRepository, null)
         orderController.processOrders()

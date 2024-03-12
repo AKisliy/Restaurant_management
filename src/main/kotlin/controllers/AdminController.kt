@@ -3,6 +3,7 @@ package controllers
 import InputController
 import OutputController
 import models.Dish
+import models.Restaurant
 import repository.MenuRepository
 
 /**
@@ -11,11 +12,12 @@ import repository.MenuRepository
 class AdminController(
     private val outputController: OutputController,
     private val inputController: InputController,
-    private val menuRepo: MenuRepository
+    private val menuRepo: MenuRepository,
+    private val restaurant: Restaurant
 ) {
     private val editingOptions: List<String> = listOf("Set amount", "Set price", "Set time for preparing")
-    val adminFunctions: List<String> = listOf("Add dish", "Remove dish", "Configure dish")
-    val functionsNumber = 3
+    val adminFunctions: List<String> = listOf("Add dish", "Remove dish", "Configure dish", "Get margin by day", "Get total margin")
+    val functionsNumber = 5
 
     fun processFunction(number: Int){
         if(number < 1 || number > functionsNumber)
@@ -24,6 +26,8 @@ class AdminController(
             1 -> addDish()
             2 -> removeDish()
             3 -> configureDish()
+            4 -> getMarginByDay()
+            5 -> getTotalMargin()
         }
     }
     private fun addDish(){
@@ -116,7 +120,6 @@ class AdminController(
     private fun getDishPrice(): Int? {
         var price: Int
         while(true){
-            outputController.printMessage("Dish price:")
             price = inputController.getNumber()
             if(price > 0) {
                 return price
@@ -132,7 +135,6 @@ class AdminController(
     private fun getDishAmount() : Int? {
         var amount: Int
         while(true){
-            outputController.printMessage("Amount of dish:")
             amount = inputController.getNumber()
             if(amount < 0) {
                 outputController.printMessage("Amount can't be negative!")
@@ -149,7 +151,6 @@ class AdminController(
     private fun getTimeForPreparing() : Int? {
         var time: Int
         while(true){
-            outputController.printMessage("Dish time for preparing:")
             time = inputController.getNumber()
             if(time >= 0){
                 return time
@@ -160,5 +161,26 @@ class AdminController(
                     return null
             }
         }
+    }
+
+    private fun getMarginByDay() {
+        outputController.printMessage("Enter date to check the margin:")
+        outputController.printMessage("(example: 2023-12-23)")
+        while(true) {
+            val margin = restaurant.getMarginForDay(inputController.getDate())
+            if (margin == 0) {
+                outputController.printMessage("Nothing was sold in this day")
+            } else {
+                outputController.printMessage("Total margin in that day: $margin$")
+            }
+            outputController.printMessage("Check margin for other date? (Y/N)")
+            if(!inputController.getUserApproval()){
+                break
+            }
+        }
+    }
+
+    private fun getTotalMargin() {
+        outputController.printMessage("Total margin: ${restaurant.totalMargin}$")
     }
 }

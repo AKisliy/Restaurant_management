@@ -36,7 +36,7 @@ class Restaurant(
      */
     fun orderSold(order: Order){
         val today = Calendar.getInstance()
-        val ld = LocalDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH))
+        val ld = LocalDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH))
         marginByDays[ld] = marginByDays.getOrDefault(ld, 0) + order.total
         filesController.saveChanges(this, FilePaths.RESTAURANT_FILE.path)
     }

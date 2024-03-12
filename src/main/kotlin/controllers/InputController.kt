@@ -1,5 +1,7 @@
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toLocalDate
 import java.lang.IllegalArgumentException
 /**
  * InputController - class which is responsible for getting user input from console
@@ -41,5 +43,27 @@ class InputController(
             input = readlnOrNull()
         }
         return input[0] == 'Y'
+    }
+
+    fun getDate(): LocalDate{
+        var input = readlnOrNull()
+        var date: LocalDate
+        while(true){
+            if(input == null){
+                errorPrinter("Incorrect input!! Try again")
+                input = readlnOrNull()
+                continue
+            }
+            try{
+                date = input.toLocalDate()
+                break
+            }
+            catch (e: IllegalArgumentException){
+                errorPrinter("Can't convert your input to valid date")
+                println("Try again!!")
+                input = readlnOrNull()
+            }
+        }
+        return date
     }
 }
